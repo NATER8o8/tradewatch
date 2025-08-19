@@ -1,0 +1,18 @@
+
+{
+  "packageId": "com.yourco.officialtradespro",
+  "host": "YOUR_DOMAIN",
+  "name": "Official Trades Pro",
+  "launcherName": "OTP",
+  "iconUrl": "https://YOUR_DOMAIN/icons/icon-512.png",
+  "signingKey": {
+    "path": "android.keystore",
+    "alias": "android"
+  },
+  "display": "standalone",
+  "startUrl": "/",
+  "themeColor": "#0b0f14",
+  "navigationColor": "#0b0f14",
+  "backgroundColor": "#0b0f14",
+  "enableNotifications": true
+}
