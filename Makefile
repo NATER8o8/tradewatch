@@ -1,5 +1,5 @@
 
-.PHONY: setup api worker web migrate revision seed export smoke
+.PHONY: setup api worker web web-build build migrate revision seed export smoke
 PY := python
 PIP := pip
 setup:
@@ -16,6 +16,11 @@ seed:
 	. .venv/bin/activate && $(PY) -m server.seed
 web:
 	cd webapp && npm install && npm run dev
+
+web-build:
+	cd webapp && npm install && npm run build
+
+build: setup web-build
 export:
 	curl -sS 'http://localhost:8001/api/export/trades.csv' -o trades.csv && echo "Saved trades.csv"
 smoke:

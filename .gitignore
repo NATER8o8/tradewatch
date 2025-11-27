@@ -1,0 +1,18 @@
+# Python virtualenvs and caches
+.venv/
+__pycache__/
+*.pyc
+
+# Environment and local config
+.env
+.env.*
+
+# Node/Next.js artifacts
+webapp/node_modules/
+webapp/.next/
+webapp/.turbo/
+webapp/.vercel/
+webapp/npm-debug.log*
+webapp/pnpm-debug.log*
+webapp/yarn-error.log
+webapp/package-lock.json

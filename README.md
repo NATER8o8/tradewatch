@@ -17,6 +17,15 @@ make worker     # RQ worker
 cd webapp && npm install && npm run dev  # :3000
 ```
 
+## Build
+```bash
+# Install backend deps, create venv, and compile the Next.js app
+make build
+```
+
+The `build` target chains the Python setup (virtualenv + `server/requirements.txt`)
+and the production Next.js build so a fresh clone ends up with both layers ready.
+
 ## Slack commands
 - `/otp brief {trade_id}`, `/otp brief`, `/otp brief latest`
 - `/otp digest [N]`
