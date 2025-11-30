@@ -18,6 +18,7 @@ python-multipart
 alembic
 APScheduler
 psycopg2-binary
+pdfplumber
 
 python-dateutil
 

@@ -117,6 +117,18 @@ bash scripts/run_https.sh   # serves on https://localhost:8443
 ```
 Chrome will warn about the self-signed cert; proceed to enable PWA features.
 
+## PTR PDF extraction helper
+Use `scripts/parse_ptr_pdf.py` to convert a House PTR PDF into JSON or CSV that can
+then be ingested:
+```bash
+scripts/parse_ptr_pdf.py path/to/ptr.pdf --format csv -o data/ptr.csv
+```
+When PDFs are scanned images, the script falls back to OCR via Tesseract. Install
+`tesseract-ocr` on your system so the fallback works and check the reported confidence
+score before trusting the output.
+Set `HOUSE_DATA_CSV=file://$PWD/data/ptr.csv` (and restart the API) before running
+`/api/admin/ingest/*` so the ingestion pipeline reads your freshly extracted data.
+
 ## First-run wizard
 Open `/setup` to initialize an admin API token (stored in the DB settings table).
 
