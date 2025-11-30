@@ -38,6 +38,8 @@ docker compose -f deploy/docker-compose.dev.yml up --build
   and exposes port `3000` (edit locally, refresh the browser).
 - API + worker containers hot-reload the mounted `server/` directory and expose port `8001`.
 - Override `NEXT_PUBLIC_API_BASE` if your browser should talk to a different API host.
+- To seed demo trades inside the stack, run  
+  `docker compose -f deploy/docker-compose.dev.yml run --rm api python -m server.seed`.
 - Stop everything with `docker compose -f deploy/docker-compose.dev.yml down`.
 
 ## Slack commands
