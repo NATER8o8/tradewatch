@@ -9,7 +9,8 @@
 
 ## Quickstart
 ```bash
-make setup
+scripts/setup_env.sh   # creates venv + installs npm deps
+make setup             # optional if you prefer Makefile
 make migrate && make seed
 make api        # API on :8001
 make worker     # RQ worker
@@ -27,6 +28,11 @@ The `build` target chains the Python setup (virtualenv + `server/requirements.tx
 and the production Next.js export so a fresh clone ends up with both layers ready.
 The export lands in `webapp/out`, which FastAPI can serve directly when
 `SERVE_FRONTEND=1`.
+
+### Environment prep script
+Run `scripts/setup_env.sh` to bootstrap both backend (Python virtualenv) and frontend
+(`npm install`) dependencies in one go. Override binaries via env vars, e.g.
+`PY=python3.11 NODE=node20 NPM=npm9 scripts/setup_env.sh`.
 
 ## Containerized dev stack
 ```bash
