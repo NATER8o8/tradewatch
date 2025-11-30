@@ -27,3 +27,7 @@ smoke_run.log
 pytest_full.log
 uvicorn.pid
 worker.pid
+
+# CSV and data files
+*.csv
+*.pdf
