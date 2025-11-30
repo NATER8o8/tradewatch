@@ -14,16 +14,24 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 SESSION_DIR = ROOT / ".local"
 SESSION_FILE = SESSION_DIR / "tradewatch_session.json"
+PROJECT_CONTEXT = ROOT / "PROJECT_CONTEXT.md"
+AUTO_START = "<!-- AUTO_NOTES_START -->"
+AUTO_END = "<!-- AUTO_NOTES_END -->"
+MAX_NOTES = int(os.environ.get("TW_CONTEXT_MAX_NOTES", "20"))
+
+
+def current_timestamp() -> str:
+    return datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 def ensure_dir():
     SESSION_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def append_entry(role: str, message: str) -> None:
+def append_entry(role: str, message: str) -> dict:
     ensure_dir()
     entry = {
-        "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+        "timestamp": current_timestamp(),
         "role": role,
         "message": message,
     }
@@ -36,12 +44,13 @@ def append_entry(role: str, message: str) -> None:
                 data.append(entry)
                 with SESSION_FILE.open("w", encoding="utf-8") as f:
                     json.dump(data, f, indent=2, ensure_ascii=False)
-                return
+                return entry
         except Exception:
             pass
 
     with SESSION_FILE.open("w", encoding="utf-8") as f:
         json.dump([entry], f, indent=2, ensure_ascii=False)
+    return entry
 
 
 def show_last(n: int):
@@ -55,6 +64,45 @@ def show_last(n: int):
     except Exception:
         return []
     return []
+
+
+def normalize_message(msg: str) -> str:
+    # Collapse whitespace/newlines for context file entries
+    return " ".join(msg.strip().split())
+
+
+def ensure_context_markers(text: str) -> str:
+    if AUTO_START in text and AUTO_END in text:
+        return text
+    extra = "\n\n## Latest Notes\n_Auto-updated by `scripts/save_session.py`. Newest first. Keep the markers below in place._\n\n"
+    extra += AUTO_START + "\n" + AUTO_END + "\n"
+    return text.rstrip() + extra
+
+
+def update_project_context(entry: dict):
+    if not PROJECT_CONTEXT.exists():
+        # Nothing to update; context file optional
+        return
+    text = PROJECT_CONTEXT.read_text(encoding="utf-8")
+    text = ensure_context_markers(text)
+    start_idx = text.find(AUTO_START)
+    end_idx = text.find(AUTO_END)
+    if start_idx == -1 or end_idx == -1 or end_idx < start_idx:
+        return
+    start_idx += len(AUTO_START)
+    before = text[:start_idx]
+    block = text[start_idx:end_idx]
+    after = text[end_idx:]
+    lines = [line.strip() for line in block.strip().splitlines() if line.strip()]
+    new_line = f"- [{entry.get('timestamp','?')}] {entry.get('role','?')}: {normalize_message(entry.get('message',''))}"
+    notes = [new_line]
+    for ln in lines:
+        if ln != new_line:
+            notes.append(ln)
+    notes = notes[:MAX_NOTES]
+    notes_text = ("\n".join(notes) + "\n") if notes else "\n"
+    new_content = before + "\n" + notes_text + after
+    PROJECT_CONTEXT.write_text(new_content, encoding="utf-8")
 
 
 def main():
@@ -80,7 +128,8 @@ def main():
         print("No message provided", file=sys.stderr)
         sys.exit(2)
 
-    append_entry(args.role, msg)
+    entry = append_entry(args.role, msg)
+    update_project_context(entry)
     print("Saved to", SESSION_FILE)
 
     if args.wip:

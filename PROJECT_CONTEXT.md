@@ -18,6 +18,13 @@ This file captures the running context so a new chat/session can resume quickly.
 - **Test containerized frontend**: Once Docker works, start the dev stack, browse `http://localhost:3000`, and confirm it reaches the API (`http://localhost:8001`).
 - **Signed commits**: Current commits were made without signatures (signing disabled temporarily). Recreate them with signing enabled if required.
 
+## Latest Notes
+_Auto-updated by `scripts/save_session.py`. Newest first. Keep the markers below in place._
+
+<!-- AUTO_NOTES_START -->
+- [2025-11-30T03:08:36.645435Z] user: saving session
+<!-- AUTO_NOTES_END -->
+
 ## Useful Commands
 ```bash
 docker compose -f deploy/docker-compose.dev.yml up --build     # dev stack

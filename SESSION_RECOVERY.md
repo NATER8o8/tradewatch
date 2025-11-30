@@ -31,6 +31,7 @@ VS Code integration
 - A `tasks.json` is provided at `.vscode/tasks.json` with two convenient tasks:
 	- **Save session (prompt)**: prompts you in the integrated terminal to type a short note and saves it.
 	- **Save session (from clipboard)**: saves the current clipboard contents as a session note (tries `xclip`, `wl-paste`, `pbpaste`).
+	- Both tasks now also update `PROJECT_CONTEXT.md` (“Latest Notes” section) automatically so future sessions have a summary ready.
 
 Run the tasks via **Terminal → Run Task...** or bind them with a keyboard shortcut in VS Code.
 
