@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Template post-commit hook to create a session entry after commits
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$REPO_ROOT" || exit 1
+COMMIT_SHORT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+MSG="post-commit snapshot: $COMMIT_SHORT"
+python3 "${REPO_ROOT}/scripts/save_session.py" --role assistant --message "$MSG"

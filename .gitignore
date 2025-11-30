@@ -20,3 +20,10 @@ webapp/package-lock.json
 # Local session/chat history (ignored)
 .local/
 .tradewatch_session.json
+
+dev_uvicorn.log
+worker.log
+smoke_run.log
+pytest_full.log
+uvicorn.pid
+worker.pid
