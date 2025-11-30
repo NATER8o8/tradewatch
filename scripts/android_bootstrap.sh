@@ -14,8 +14,7 @@ pip install -r server/requirements.txt
 # Build static web
 cd webapp
 npm install
-npm run build
-npx next export
+npm run build-export
 cd ..
 
 # Run API serving static frontend

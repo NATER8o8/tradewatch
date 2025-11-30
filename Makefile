@@ -18,7 +18,7 @@ web:
 	cd webapp && npm install && npm run dev
 
 web-build:
-	cd webapp && npm install && npm run build
+	cd webapp && npm install && npm run build-export
 
 build: setup web-build
 export:

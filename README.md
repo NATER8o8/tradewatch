@@ -19,12 +19,26 @@ cd webapp && npm install && npm run dev  # :3000
 
 ## Build
 ```bash
-# Install backend deps, create venv, and compile the Next.js app
+# Install backend deps, create venv, and compile + export the Next.js app
 make build
 ```
 
 The `build` target chains the Python setup (virtualenv + `server/requirements.txt`)
-and the production Next.js build so a fresh clone ends up with both layers ready.
+and the production Next.js export so a fresh clone ends up with both layers ready.
+The export lands in `webapp/out`, which FastAPI can serve directly when
+`SERVE_FRONTEND=1`.
+
+## Containerized dev stack
+```bash
+# bring up Postgres, Redis, API, worker, and Next dev server
+docker compose -f deploy/docker-compose.dev.yml up --build
+```
+
+- The `web` service runs `npm run dev` in a container, mounts `webapp/` from the host,
+  and exposes port `3000` (edit locally, refresh the browser).
+- API + worker containers hot-reload the mounted `server/` directory and expose port `8001`.
+- Override `NEXT_PUBLIC_API_BASE` if your browser should talk to a different API host.
+- Stop everything with `docker compose -f deploy/docker-compose.dev.yml down`.
 
 ## Slack commands
 - `/otp brief {trade_id}`, `/otp brief`, `/otp brief latest`

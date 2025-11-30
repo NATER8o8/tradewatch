@@ -2,9 +2,9 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies (prefer npm ci if lockfile is present)
 COPY package*.json ./
-RUN npm ci --silent
+RUN if [ -f package-lock.json ]; then npm ci --silent; else npm install --silent; fi
 
 # Copy source
 COPY . /app
