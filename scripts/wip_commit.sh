@@ -10,6 +10,7 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
 
 MSG=""
+ADD_ALL=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --message|-m)
@@ -17,8 +18,14 @@ while [[ $# -gt 0 ]]; do
       MSG="$1"
       shift
       ;;
+    --all|-a)
+      ADD_ALL=1
+      shift
+      ;;
     --help|-h)
-      echo "Usage: $0 [--message|-m MESSAGE]"; exit 0;
+      echo "Usage: $0 [--message|-m MESSAGE] [--all]";
+      echo "  --all / -a : Stage tracked + untracked files (default is tracked only)";
+      exit 0;
       ;;
     *)
       echo "Unknown arg: $1" >&2; exit 2;
@@ -65,8 +72,13 @@ if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
   exit 1
 fi
 
-echo "Staging changes..."
-git add -A
+if [[ $ADD_ALL -eq 1 ]]; then
+  echo "Staging tracked and untracked changes (git add -A)..."
+  git add -A
+else
+  echo "Staging tracked changes only (git add -u). Pass --all to include new files."
+  git add -u
+fi
 
 echo "Committing as WIP: $MSG"
 if git commit -m "WIP: $MSG"; then

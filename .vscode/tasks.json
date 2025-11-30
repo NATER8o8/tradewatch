@@ -51,5 +51,15 @@
       "presentation": { "echo": true, "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     }
+    ,
+    {
+      "label": "Run file-watcher (auto-save sessions)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-ic", "python3 scripts/file_watcher.py"],
+      "presentation": { "echo": true, "reveal": "always", "panel": "shared" },
+      "isBackground": true,
+      "problemMatcher": []
+    }
   ]
 }

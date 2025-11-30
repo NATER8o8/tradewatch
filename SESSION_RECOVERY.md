@@ -48,7 +48,7 @@ WIP commits (frequent commits)
 python3 scripts/save_session.py --role user --message "investigating Dockerfile issues" --wip
 ```
 
-- The WIP helper stages all changes (`git add -A`) and commits with a `WIP:` prefix. It is interactive if you omit `--message`.
+- The WIP helper stages tracked changes only by default (`git add -u`) so accidental new files are not committed. Pass `--all` if you want to include untracked files. It is interactive if you omit `--message`.
 
 Notes
 
@@ -67,4 +67,3 @@ Containerization troubleshooting (quick notes)
 	- Set `web.environment.NEXT_PUBLIC_API_BASE` to `http://api:8001` for container-to-container API calls.
 	- For browser-based local development (accessing Next from host), you may prefer `http://localhost:8001` but ensure Next's runtime picks the right value (server vs client).
 - If you saw build or runtime errors while containerizing the frontend, open `webapp/Dockerfile` and `deploy/docker-compose.dev.yml` — I reviewed them and suggest using the service hostnames for inter-service communication.
-
