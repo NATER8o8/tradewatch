@@ -7,6 +7,7 @@ from sqlalchemy import select, and_
 from dateutil import parser as dateparser
 
 from .models import Official, Trade, Chamber, TxType, Owner, TradeSource
+import json
 from . import storage_s3
 
 def parse_amount_range(txt: Optional[str]) -> Tuple[Optional[float], Optional[float]]:
@@ -101,14 +102,14 @@ def persist_records(db: Session, records: List[Dict[str, Any]], source_url: str 
         db.add(tr); db.flush(); added += 1
         # provenance snapshot
         try:
-            src = TradeSource(trade_id=tr.id, source=(r.get('source') or ''), source_url=(r.get('source_url') or source_url or ''), raw_json=json.dumps(r), source_url=(r.get('source_url') or source_url or ''))
+            src = TradeSource(trade_id=tr.id, source=(r.get('source') or ''), source_url=(r.get('source_url') or source_url or ''), raw_json=json.dumps(r))
             try:
-            s3k = storage_s3.put_json(r, key_hint='trade')
-            if s3k:
-                src.raw_json = json.dumps({"local": r, "s3_key": s3k})
-        except Exception:
-            pass
-        db.add(src)
+                s3k = storage_s3.put_json(r, key_hint='trade')
+                if s3k:
+                    src.raw_json = json.dumps({"local": r, "s3_key": s3k})
+            except Exception:
+                pass
+            db.add(src)
         except Exception:
             pass
     db.commit()

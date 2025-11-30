@@ -4,6 +4,7 @@ from sqlalchemy import String, Integer, Date, DateTime, ForeignKey, Numeric, Tex
 import enum
 
 Base = declarative_base()
+Base.__allow_unmapped__ = True
 
 class Chamber(str, enum.Enum):
     house = "house"

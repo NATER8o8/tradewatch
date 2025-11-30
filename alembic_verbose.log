@@ -1,0 +1,4 @@
+usage: alembic [-h] [--version] [-c CONFIG] [-n NAME] [-x X] [--raiseerr] [-q]
+               {branches,check,current,downgrade,edit,ensure_version,heads,history,init,list_templates,merge,revision,show,stamp,upgrade}
+               ...
+alembic: error: unrecognized arguments: -v

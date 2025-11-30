@@ -12,7 +12,6 @@ from .local_queue import QUEUE as LQ, LocalJob
 from .db import SessionLocal
 from .models import Trade, Official, Brief
 from .ai import make_brief
-from .slack_integration import respond
 from .backtest import backtest_equal_weight
 
 
@@ -68,7 +67,9 @@ def brief_task(trade_id: int, response_url: Optional[str] = None) -> dict:
         _set_progress(100, "Done")
         msg = f"*Brief for trade #{tr.id}:* {tr.ticker or tr.issuer} — {out.get('text','')[:300]}..."
         if response_url:
-            import asyncio; asyncio.run(respond(response_url, msg))
+            import asyncio
+            from .slack_integration import respond
+            asyncio.run(respond(response_url, msg))
         return {"ok": True, "brief_id": brief.id}
 
 def backtest_task(hold_days: int = 30, benchmark: str = "SPY", chamber: str = None, tx_filter: str = None,
@@ -86,6 +87,7 @@ def backtest_task(hold_days: int = 30, benchmark: str = "SPY", chamber: str = No
         alpha = res.get("summary",{}).get("alpha")
         sharpe = res.get("summary",{}).get("sharpe")
         msg = f"*Backtest* {hold_days}d vs {benchmark}: alpha={alpha:.2%}, sharpe={sharpe:.2f}"
+        from .slack_integration import respond
         asyncio.run(respond(response_url, msg))
     return {"ok": True, **res}
 
