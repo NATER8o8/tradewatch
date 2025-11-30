@@ -16,6 +16,8 @@ pillow
 pytesseract
 python-multipart
 alembic
+APScheduler
+psycopg2-binary
 
 python-dateutil
 

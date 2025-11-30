@@ -12,10 +12,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Copy and install Python dependencies
 COPY requirements.txt ./requirements.txt
-RUN pip install --upgrade pip setuptools wheel && pip install -r requirements.txt
+RUN pip install --upgrade pip setuptools wheel && pip install -r requirements.txt \
+    && pip install "psycopg2-binary>=2.9"
 
 # Copy app sources
-COPY . /app
+COPY . /app/server
 
 EXPOSE 8001
 

@@ -173,31 +173,6 @@ def list_trades(
     return {"ok": True, "items": items}
 
 # --- BRIEFS ---
-@app.post("/api/brief/{trade_id}")
-def generate_brief(trade_id: int, email: Optional[str] = Depends(current_user_email), db: Session = Depends(db_session)):
-    require_active_subscription(db, email)
-    trade = db.get(Trade, trade_id)
-    if not trade: raise HTTPException(status_code=404, detail="Trade not found")
-    off = db.get(Official, trade.official_id) if trade.official_id else None
-    trade_dict = {
-        "trade_id": trade.id,
-        "official_name": off.name if off else "(unknown)",
-        "chamber": off.chamber.value if off else "(unknown)",
-        "committee_names": off.committees if off else "",
-        "transaction_type": trade.transaction_type.value,
-        "owner": trade.owner.value,
-        "trade_date": trade.trade_date.isoformat() if trade.trade_date else None,
-        "reported_date": trade.reported_date.isoformat() if trade.reported_date else None,
-        "ticker": trade.ticker, "issuer": trade.issuer,
-        "amount_min": float(trade.amount_min) if trade.amount_min else None,
-        "amount_max": float(trade.amount_max) if trade.amount_max else None,
-        "filing_url": trade.filing_url,
-    }
-    out = make_brief(trade_dict)
-    brief = Brief(trade_id=trade.id, provider="openai", content_md=out.get("text",""), citations=out.get("citations",[]))
-    db.add(brief); db.commit(); db.refresh(brief)
-    return {"ok": True, "brief_id": brief.id, "content_md": brief.content_md, "citations": brief.citations}
-
 @app.post("/api/brief/latest")
 def generate_brief_latest(email: Optional[str] = Depends(current_user_email), db: Session = Depends(db_session)):
     require_active_subscription(db, email)
@@ -223,6 +198,31 @@ def generate_brief_latest(email: Optional[str] = Depends(current_user_email), db
     brief = Brief(trade_id=latest.id, provider="openai", content_md=out.get("text",""), citations=out.get("citations",[]))
     db.add(brief); db.commit(); db.refresh(brief)
     return {"ok": True, "brief_id": brief.id, "content_md": brief.content_md, "citations": brief.citations, "trade_id": latest.id}
+
+@app.post("/api/brief/{trade_id}")
+def generate_brief(trade_id: int, email: Optional[str] = Depends(current_user_email), db: Session = Depends(db_session)):
+    require_active_subscription(db, email)
+    trade = db.get(Trade, trade_id)
+    if not trade: raise HTTPException(status_code=404, detail="Trade not found")
+    off = db.get(Official, trade.official_id) if trade.official_id else None
+    trade_dict = {
+        "trade_id": trade.id,
+        "official_name": off.name if off else "(unknown)",
+        "chamber": off.chamber.value if off else "(unknown)",
+        "committee_names": off.committees if off else "",
+        "transaction_type": trade.transaction_type.value,
+        "owner": trade.owner.value,
+        "trade_date": trade.trade_date.isoformat() if trade.trade_date else None,
+        "reported_date": trade.reported_date.isoformat() if trade.reported_date else None,
+        "ticker": trade.ticker, "issuer": trade.issuer,
+        "amount_min": float(trade.amount_min) if trade.amount_min else None,
+        "amount_max": float(trade.amount_max) if trade.amount_max else None,
+        "filing_url": trade.filing_url,
+    }
+    out = make_brief(trade_dict)
+    brief = Brief(trade_id=trade.id, provider="openai", content_md=out.get("text",""), citations=out.get("citations",[]))
+    db.add(brief); db.commit(); db.refresh(brief)
+    return {"ok": True, "brief_id": brief.id, "content_md": brief.content_md, "citations": brief.citations}
 
 # --- BACKTEST (sync) ---
 @app.get("/api/backtest")
