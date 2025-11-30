@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SESSION_DIR = ROOT / ".local"
 SESSION_FILE = SESSION_DIR / "tradewatch_session.json"
 PROJECT_CONTEXT = ROOT / "PROJECT_CONTEXT.md"
+CONTEXT_LOG = ROOT / "CONTEXT_LOG.md"
 AUTO_START = "<!-- AUTO_NOTES_START -->"
 AUTO_END = "<!-- AUTO_NOTES_END -->"
 MAX_NOTES = int(os.environ.get("TW_CONTEXT_MAX_NOTES", "20"))
@@ -66,6 +67,19 @@ def show_last(n: int):
     return []
 
 
+def load_all_entries():
+    if not SESSION_FILE.exists():
+        return []
+    try:
+        with SESSION_FILE.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+            if isinstance(data, list):
+                return data
+    except Exception:
+        return []
+    return []
+
+
 def normalize_message(msg: str) -> str:
     # Collapse whitespace/newlines for context file entries
     return " ".join(msg.strip().split())
@@ -105,6 +119,47 @@ def update_project_context(entry: dict):
     PROJECT_CONTEXT.write_text(new_content, encoding="utf-8")
 
 
+def update_context_log():
+    generated = current_timestamp()
+    project_text = ""
+    if PROJECT_CONTEXT.exists():
+        project_text = PROJECT_CONTEXT.read_text(encoding="utf-8").strip()
+    else:
+        project_text = "_PROJECT_CONTEXT.md missing_"
+
+    entries = load_all_entries()
+    count = len(entries)
+    latest = entries[-10:]
+    latest_lines = []
+    if latest:
+        for entry in reversed(latest):
+            ts = entry.get("timestamp", "?")
+            role = entry.get("role", "?")
+            msg = entry.get("message", "")
+            latest_lines.append(f"- [{ts}] {role}: {msg}")
+    else:
+        latest_lines.append("- (no entries yet)")
+
+    latest_block = "\n".join(latest_lines)
+    content = f"""# Conversation Context Snapshot
+
+_Generated: {generated}_
+
+## Project Context Snapshot
+
+{project_text}
+
+## Latest Session Notes (newest first)
+
+{latest_block}
+
+## Session Entry Count
+
+{count}
+"""
+    CONTEXT_LOG.write_text(content, encoding="utf-8")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Save or show local session entries")
     parser.add_argument("--role", choices=["user", "assistant", "system"], default="user")
@@ -130,6 +185,7 @@ def main():
 
     entry = append_entry(args.role, msg)
     update_project_context(entry)
+    update_context_log()
     print("Saved to", SESSION_FILE)
 
     if args.wip:

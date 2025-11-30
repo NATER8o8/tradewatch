@@ -1,3 +1,9 @@
+# Conversation Context Snapshot
+
+_Generated: 2025-11-30T22:11:54.580872Z_
+
+## Project Context Snapshot
+
 # Project Context
 
 _Updated: 2025-11-30_
@@ -40,3 +46,15 @@ python3 scripts/save_session.py --message "note"               # append local se
 ## Tips
 - If chat resets, skim this file plus `SESSION_RECOVERY.md` to restore context.
 - Update this file after significant milestones (new tasks, blockers, completed work) so the next session has an accurate snapshot.
+
+## Latest Session Notes (newest first)
+
+- [2025-11-30T22:11:54.580586Z] user: Context sync check
+- [2025-11-30T22:11:04.270909Z] user: Sync context log
+- [2025-11-30T22:09:44.421235Z] user: Context update placeholder
+- [2025-11-30T03:08:36.645435Z] user: saving session
+- [2025-11-30T01:58:31.001456Z] assistant: session recovery test from copilot
+
+## Session Entry Count
+
+5
