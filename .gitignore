@@ -16,3 +16,7 @@ webapp/npm-debug.log*
 webapp/pnpm-debug.log*
 webapp/yarn-error.log
 webapp/package-lock.json
+
+# Local session/chat history (ignored)
+.local/
+.tradewatch_session.json

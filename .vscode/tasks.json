@@ -1,0 +1,55 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Save session (prompt)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-ic",
+        "read -p \"Session note: \" msg; python3 scripts/save_session.py --role user --message \"$msg\""
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Save session (from clipboard)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "python3 scripts/save_session.py --role user --message \"$(xclip -selection clipboard -o 2>/dev/null || wl-paste 2>/dev/null || pbpaste 2>/dev/null || echo '')\""
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+    ,
+    {
+      "label": "WIP Commit (prompt)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-ic",
+        "./scripts/wip_commit.sh"
+      ],
+      "presentation": { "echo": true, "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Local snapshot (history)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-ic", "./scripts/local_history.sh --message \"VSCode snapshot\""],
+      "presentation": { "echo": true, "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    }
+  ]
+}
